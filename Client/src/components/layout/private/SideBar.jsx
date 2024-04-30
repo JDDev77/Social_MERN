@@ -1,10 +1,40 @@
+import { Link } from "react-router-dom"
 import avatar from "../../../assets/img/user.png"
 import { Global } from "../../../helpers/Global"
 import useAuth from "../../../hooks/useAuth"
+import { useState } from "react"
+import { useForm } from "../../../hooks/useForm"
 export const SideBar = () => {
 
     const {auth,counters} = useAuth()
+    const {form, changed} = useForm({})
+    const [stored, setStored] = useState("not_stored");
     //TODO mirar lo de la foto de los cojones
+    const savePublication = async(e) =>{
+        e.preventDefault()
+        //Recoger datos del fomr
+        let newPublication = form
+        newPublication.user = auth._id
+        //Hacer request
+        const request = await fetch(Global.url + 'publication/save',{
+            method: "POST",
+            body: JSON.stringify(newPublication),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization" : localStorage.getItem("token")
+            }
+        })
+
+        const data = await request.json()
+        //Mostrar mensaje de exito
+        if (data.status === "success") {
+            setStored("success");  // Cambia "stored" a "success" para coincidir con tus condiciones
+        } else {
+            setStored("error");
+        }
+        
+        //Subir imagen
+    }
   return (
     <aside className="layout__aside">
 
@@ -32,16 +62,16 @@ export const SideBar = () => {
             <div className="profile-info__stats">
 
                 <div className="stats__following">
-                    <a href="#" className="following__link">
+                    <Link to={"siguiendo/"+auth._id} className="following__link">
                         <span className="following__title">Siguiendo</span>
                         <span className="following__number">{counters.following}</span>
-                    </a>
+                    </Link>
                 </div>
                 <div className="stats__following">
-                    <a href="#" className="following__link">
+                    <Link to={"seguidores/"+auth._id} className="following__link">
                         <span className="following__title">Seguidores</span>
                         <span className="following__number">{counters.followed}</span>
-                    </a>
+                    </Link>
                 </div>
 
 
@@ -58,20 +88,26 @@ export const SideBar = () => {
 
 
         <div className="aside__container-form">
+        {stored === "success" ?
+        <strong className="alert alert-success">Publicada correctamente</strong> : null
+        }
+        {stored === "error" ?
+        <strong className="alert alert-danger">Error en la publicación</strong> : null
+        }
 
-            <form className="container-form__form-post">
+            <form className="container-form__form-post" onSubmit={savePublication}>
 
                 <div className="form-post__inputs">
-                    <label htmlFor="post" className="form-post__label">¿Que estas pesando hoy?</label>
-                    <textarea name="post" className="form-post__textarea"></textarea>
+                    <label htmlFor="text" className="form-post__label">¿Que estas pesando hoy?</label>
+                    <textarea name="text" className="form-post__textarea" onChange={changed}/>
                 </div>
 
                 <div className="form-post__inputs">
-                    <label htmlFor="image" className="form-post__label">Sube tu foto</label>
-                    <input type="file" name="image" className="form-post__image"/>
+                    <label htmlFor="file" className="form-post__label">Sube tu foto</label>
+                    <input type="file" name="file0" id="file" className="form-post__image"/>
                 </div>
 
-                <input type="submit" value="Enviar" className="form-post__btn-submit" disabled/>
+                <input type="submit" value="Enviar" className="form-post__btn-submit"/>
 
             </form>
 

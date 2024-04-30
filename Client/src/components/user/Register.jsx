@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { Global } from '../../helpers/Global';
-
+//TODO hacer un navigate para que despues del registro se redireccione al login
 export const Register = () => {
     const { form, changed } = useForm({});
     const [status, setStatus] = useState({

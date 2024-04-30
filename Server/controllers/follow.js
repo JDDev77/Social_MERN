@@ -103,8 +103,8 @@ const following = (req, res) => {
         .populate("user followed", "-password -role -__v -email")
         .paginate(page, itemsPerPage, async (error, follows, total) => {
 
-            // Listado de usuarios de trinity, y soy victor
-            // Sacar un array de ids de los usuarios que me siguen y los que sigo como victor
+            // Listado de usuarios de trinity, y soy juan
+            // Sacar un array de ids de los usuarios que me siguen y los que sigo como juan
             let followUserIds = await followService.followUserIds(req.user.id);
 
             return res.status(200).send({

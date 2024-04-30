@@ -17,6 +17,12 @@ export const Nav = () => {
                             <span className="menu-list__title">Registro</span>
                         </NavLink>
                     </li>
+                    <li className="menu-list__item">
+                        <NavLink to="/ayuda" className="menu-list__link">
+                        <i className="fa-solid fa-circle-question"></i>
+                        <span className="menu-list__title">Ayuda</span>
+                        </NavLink>
+                    </li>
                 </ul>
             </nav>
 

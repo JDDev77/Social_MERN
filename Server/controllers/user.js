@@ -187,7 +187,7 @@ const list = (req, res) => {
             });
         }
 
-        // Sacar un array de ids de los usuarios que me siguen y los que sigo como victor
+        // Sacar un array de ids de los usuarios que me siguen y los que sigo como Juan
         let followUserIds = await followService.followUserIds(req.user.id);
 
         // Devolver el resultado (posteriormente info follow)

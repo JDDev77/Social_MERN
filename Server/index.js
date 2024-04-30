@@ -2,7 +2,6 @@
 const connection = require("./database/connection");
 const express = require("express");
 const cors = require("cors");
-
 // Mensaje bienvenida
 console.log("API NODE para RED SOCIAL arrancada!!");
 
