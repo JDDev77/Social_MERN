@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Global from "../../helpers/Global"
 import { UserList } from "../user/UserList"
 import { useParams } from "react-router-dom"
+import getProfile from "../../helpers/getProfile"
 
 //TODO REVISAR CUANDO TENGAMOS SEGUIDORES Y DEMAS
 //TODO revisar como hacer que tu propio usuario no aparezca en el listado
@@ -11,12 +12,14 @@ export const Followers = () => {
     const [page, setPage] = useState(1)
     const [more, setMore] = useState(true)
     const [following, setFollowing] = useState([])
+    const [userProfile, setUserProfile] = useState({})
 
     const params = useParams()
 
 
     useEffect(() => {
         getUsers(1)
+        getProfile(params.userId, setUserProfile)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -77,7 +80,7 @@ export const Followers = () => {
     return (
         <>
             <header className="content__header">
-                <h1 className="content__title">Mis seguidores NOMBRE USUARIO</h1>
+                <h1 className="content__title">Seguidores de {userProfile.name} {userProfile.surname}</h1>
             </header>
             <UserList users={users}
                 getUsers={setUsers}

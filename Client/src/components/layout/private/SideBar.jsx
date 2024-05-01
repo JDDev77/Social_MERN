@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom"
+
+import { Link, NavLink } from "react-router-dom"
 import avatar from "../../../assets/img/user.png"
 import { Global } from "../../../helpers/Global"
 import useAuth from "../../../hooks/useAuth"
@@ -12,6 +13,7 @@ export const SideBar = () => {
     //TODO mirar lo de la foto de los cojones
     const savePublication = async(e) =>{
         e.preventDefault()
+        const token = localStorage.getItem("token")
         //Recoger datos del fomr
         let newPublication = form
         newPublication.user = auth._id
@@ -21,7 +23,7 @@ export const SideBar = () => {
             body: JSON.stringify(newPublication),
             headers: {
                 "Content-Type": "application/json",
-                "Authorization" : localStorage.getItem("token")
+                "Authorization" : token
             }
         })
 
@@ -34,7 +36,34 @@ export const SideBar = () => {
         }
         
         //Subir imagen
+
+        const fileInput = document.querySelector("#file")
+        
+        if(data.status == "success" && fileInput.files[0]){
+            const formData = new FormData()
+            formData.append("file0", fileInput.files[0])
+            const uploadRequest = await fetch(Global.url + 'publication/upload/'+ data.publicationStored._id,{
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Authorization" : token
+                }
+            })
+
+            const uploadData = await uploadRequest.json()
+            if(uploadData.status === "success"){
+                setStored("stored")
+            }else{
+                setStored("error")
+            }
+    
+            if(data.status === "success" && uploadData.status === "success"){
+                const myForm = document.querySelector("#publication_form")
+                myForm.reset()
+            }
+        }
     }
+    //TODO arreglar los mensajes de publicacion co
   return (
     <aside className="layout__aside">
 
@@ -54,7 +83,7 @@ export const SideBar = () => {
                 </div>
 
                 <div className="general-info__container-names">
-                    <a href="#" className="container-names__name">{auth.name} {auth.surname}</a>
+                    <NavLink to={"/social/perfil/" + auth._id} className="container-names__name">{auth.name} {auth.surname}</NavLink>
                     <p className="container-names__nickname">{auth.nick}</p>
                 </div>
             </div>
@@ -62,13 +91,13 @@ export const SideBar = () => {
             <div className="profile-info__stats">
 
                 <div className="stats__following">
-                    <Link to={"siguiendo/"+auth._id} className="following__link">
+                    <Link to={"/social/siguiendo/"+auth._id} className="following__link">
                         <span className="following__title">Siguiendo</span>
                         <span className="following__number">{counters.following}</span>
                     </Link>
                 </div>
                 <div className="stats__following">
-                    <Link to={"seguidores/"+auth._id} className="following__link">
+                    <Link to={"/social/seguidores/"+auth._id} className="following__link">
                         <span className="following__title">Seguidores</span>
                         <span className="following__number">{counters.followed}</span>
                     </Link>
@@ -76,10 +105,9 @@ export const SideBar = () => {
 
 
                 <div className="stats__following">
-                    <a href="#" className="following__link">
+                    <NavLink to={"/social/perfil/" + auth._id} className="following__link"></NavLink>
                         <span className="following__title">Publicaciones</span>
                         <span className="following__number">{counters.publications}</span>
-                    </a>
                 </div>
 
 
@@ -88,14 +116,14 @@ export const SideBar = () => {
 
 
         <div className="aside__container-form">
-        {stored === "success" ?
-        <strong className="alert alert-success">Publicada correctamente</strong> : null
-        }
-        {stored === "error" ?
-        <strong className="alert alert-danger">Error en la publicación</strong> : null
-        }
+                    {stored === "stored" ?
+                    <strong className="alert alert-success">Publicada correctamente</strong> : null
+                    }
+                    {stored === "error" ?
+                    <strong className="alert alert-danger">Error en la publicación</strong> : null
+                    }
 
-            <form className="container-form__form-post" onSubmit={savePublication}>
+            <form id="publication_form" className="container-form__form-post" onSubmit={savePublication}>
 
                 <div className="form-post__inputs">
                     <label htmlFor="text" className="form-post__label">¿Que estas pesando hoy?</label>
