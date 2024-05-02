@@ -57,11 +57,11 @@ export const SideBar = () => {
                 setStored("error")
             }
     
-            if(data.status === "success" && uploadData.status === "success"){
-                const myForm = document.querySelector("#publication_form")
-                myForm.reset()
-            }
         }
+         //if(data.status === "success" && uploadData.status === "success"){
+            const myForm = document.querySelector("#publication_form")
+            myForm.reset()
+        //}
     }
     //TODO arreglar los mensajes de publicacion co
   return (
