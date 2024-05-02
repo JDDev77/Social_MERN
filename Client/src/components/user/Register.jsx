@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useForm } from '../../hooks/useForm';
 import { Global } from '../../helpers/Global';
+import { useNavigate } from 'react-router-dom';
 //TODO hacer un navigate para que despues del registro se redireccione al login
 export const Register = () => {
+    const navigate = useNavigate();
     const { form, changed } = useForm({});
     const [status, setStatus] = useState({
         saved: false,
@@ -41,6 +43,7 @@ export const Register = () => {
         } catch (error) {
             setStatus({ saved: false, message: 'Error de conexión con el servidor' });
         }
+        navigate('/')
     };
 
     return (

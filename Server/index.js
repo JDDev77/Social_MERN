@@ -5,8 +5,6 @@ const cors = require("cors");
 // Mensaje bienvenida
 console.log("API NODE para RED SOCIAL arrancada!!");
 
-// Conexion a bbdd
-connection();
 
 // Crear servidor node
 const app = express();
@@ -43,5 +41,6 @@ app.get("/ruta-prueba", (req, res) => {
 
 // Poner servidor a escuchar peticiones http
 app.listen(puerto, () => {
+    connection();
     console.log("Servidor de node corriendo en el puerto: ", puerto);
 });
