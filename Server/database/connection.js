@@ -6,7 +6,7 @@ const connection = async() => {
         mongoose.set('strictQuery', false)
         await mongoose.connect("mongodb://localhost:27017/mi_redsocial");
 
-        console.log("Conectado correctamente a bd: mi_redsocial");
+        console.log("Conectado correctamente a la base de datos");
 
     } catch(error) {
         console.log(error);

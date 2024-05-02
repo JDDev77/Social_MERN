@@ -1,46 +1,52 @@
-// Importar dependencias
 const connection = require("./database/connection");
 const express = require("express");
 const cors = require("cors");
-// Mensaje bienvenida
-console.log("API NODE para RED SOCIAL arrancada!!");
-
-
-// Crear servidor node
 const app = express();
-const puerto = 3900;
-
-// Configurar cors
-app.use(cors());
-
-// Convertir los datos del body a objetos js
-app.use(express.json());
-app.use(express.urlencoded({extended: true})); 
-
-// Cargar conf rutas
+const port = 3900;
 const UserRoutes = require("./routes/user");
 const PublicationRoutes = require("./routes/publication");
 const FollowRoutes = require("./routes/follow");
+const methodOverride = require("method-override")
+const path = require("path")
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
+const logger = require("./logger.js")
+const fs = require("fs")
+const morgan = require("morgan")
+const errorHandler = require("./middlewares/errorHandler.mw.js")
+const passport = require("passport")
+require("dotenv").config()
+
+
+const whiteList = ["http://127.0.0.1:5500","http://localhost:3000/motos"] //IP FrontEnd
+const corsOptions = {
+    origin: (origin,callback) => {
+        if(whiteList.indexOf(origin) !== -1) {
+          console.log(origin)//Si el origen (URL que ataca a mi BackEnd está dentro de la lista blanca)
+            callback(null,true) //Continuar == NEXT
+        }else{
+            //callback(new AppError("CORS Solicitud Bloqueada", 401))
+            callback(null,false) //Permitir llamadas desde el propio BackEnd
+        }
+    },
+    credentials: true
+}
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({extended: true})); 
+app.use(methodOverride("_method"))
+app.use(express.static(path.join(__dirname, "public")))
+app.use(express.static('public'));
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/api/user", UserRoutes);
 app.use("/api/publication", PublicationRoutes);
 app.use("/api/follow", FollowRoutes);
 
-// Ruta de prueba
-app.get("/ruta-prueba", (req, res) => {
-    
-    return res.status(200).json(
-        {
-            "id": 1,
-            "nombre": "Juan",
-            "web": "Juan web.es"
-        }
-    );
+app.use(errorHandler)
 
-})
-
-// Poner servidor a escuchar peticiones http
-app.listen(puerto, () => {
+app.listen(port, () => {
     connection();
-    console.log("Servidor de node corriendo en el puerto: ", puerto);
+    console.log("Servidor de node corriendo en el puerto: ", port);
 });
